@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Event Details</h2>
+<div>
+    <h3>{{ event.title }}</h3>
+    <p><strong>Date:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+    <p><strong>Location:</strong> {{ event.location }}</p>
+    <p><strong>Organizer:</strong> {{ event.organizer.username }}</p>
+    <p><strong>Description:</strong></p>
+    <p>{{ event.description }}</p>
+</div>
+<a href="{{ url_for('list_events') }}">Back to Events List</a>
+{% endblock %}
