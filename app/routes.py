@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, login_required, logout_user, current_user
-from app.models import User, Event
+from app.models import User, Event, Registration, db
 from datetime import datetime
+from sqlalchemy import or_
 
 def index():
     return render_template('base.html')
@@ -74,3 +75,33 @@ def event_details(event_id):
         return render_template('event_details.html', event=event)
     flash('Event not found')
     return redirect(url_for('list_events'))
+
+@login_required
+def dashboard():
+    created_events = Event.query.filter_by(organizer_id=current_user.id).all()
+    registered_events = current_user.attended_events.all()
+    return render_template('dashboard.html', created_events=created_events, registered_events=registered_events)
+
+@login_required
+def register_for_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    if current_user not in event.attendees:
+        registration = Registration(user_id=current_user.id, event_id=event.id)
+        db.session.add(registration)
+        db.session.commit()
+        flash('You have successfully registered for this event!', 'success')
+    else:
+        flash('You are already registered for this event.', 'info')
+    return redirect(url_for('event_details', event_id=event_id))
+
+def search_events():
+    query = request.args.get('query')
+    if query:
+        events = Event.query.filter(or_(
+            Event.title.ilike(f'%{query}%'),
+            Event.description.ilike(f'%{query}%'),
+            Event.location.ilike(f'%{query}%')
+        )).all()
+    else:
+        events = []
+    return render_template('search_results.html', events=events, query=query)

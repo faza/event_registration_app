@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+import datetime
 
 db = SQLAlchemy()
 
@@ -53,6 +54,7 @@ class Event(db.Model):
     location = db.Column(db.String(100), nullable=False)
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     organizer = db.relationship('User', backref=db.backref('events', lazy=True))
+    attendees = db.relationship('User', secondary='registrations', backref=db.backref('attended_events', lazy='dynamic'))
 
     @classmethod
     def create_event(cls, title, description, date, location, organizer_id):
@@ -83,3 +85,9 @@ class Event(db.Model):
     def delete_event(self):
         db.session.delete(self)
         db.session.commit()
+
+class Registration(db.Model):
+    __tablename__ = 'registrations'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
+    registration_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())

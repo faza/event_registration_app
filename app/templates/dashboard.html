@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome, {{ current_user.username }}!</h1>
+
+<h2>Events You've Created</h2>
+<ul>
+{% for event in created_events %}
+    <li><a href="{{ url_for('event_details', event_id=event.id) }}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+
+<h2>Events You're Attending</h2>
+<ul>
+{% for event in registered_events %}
+    <li><a href="{{ url_for('event_details', event_id=event.id) }}">{{ event.title }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

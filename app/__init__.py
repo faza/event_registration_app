@@ -27,5 +27,8 @@ def create_app():
     app.add_url_rule('/create_event', 'create_event', routes.create_event, methods=['GET', 'POST'])
     app.add_url_rule('/events', 'list_events', routes.list_events)
     app.add_url_rule('/event/<int:event_id>', 'event_details', routes.event_details)
+    app.add_url_rule('/register_for_event/<int:event_id>', 'register_for_event', routes.register_for_event, methods=['GET', 'POST'])
+    app.add_url_rule('/home', 'home', routes.dashboard)
+    app.add_url_rule('/search', 'search_events', routes.search_events, methods=['GET', 'POST'])
 
     return app

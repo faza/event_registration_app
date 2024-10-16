@@ -1,0 +1,16 @@
+<!-- In app/templates/search_results.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Search Results for "{{ query }}"</h1>
+
+{% if events %}
+    <ul>
+    {% for event in events %}
+        <li><a href="{{ url_for('event_details', event_id=event.id) }}">{{ event.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No events found matching your search.</p>
+{% endif %}
+{% endblock %}
